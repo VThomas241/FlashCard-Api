@@ -7,7 +7,7 @@ from app.core.config import Development
 
 
 app = Flask(__name__)
-CORS(app,origins=['http://localhost:5173/*'])
+CORS(app,origins=['http://localhost:5173/'],allow_headers=['Access-Control-Allow-Origin'])
 app.config.from_object(Development)
 app.app_context().push()
 api.init_app(app)
