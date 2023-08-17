@@ -32,6 +32,9 @@ class DecksResource(Resource):
         if errors: raise InvalidDetailsException(errors)
         name = data.get('name')
 
+        if session.query(Deck).filter_by(name=name).first():
+            raise InvalidDetailsException({'error':'Deck already exists'})
+
         deck = Deck(user_id=user.id, name=name)
         session.add(deck)
         session.commit()

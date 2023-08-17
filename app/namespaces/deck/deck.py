@@ -44,16 +44,22 @@ class DeckResource(Resource):
         data = request.get_json()
         errors = DeckSchema().validate(data)
         if errors : raise InvalidDetailsException(errors)
-        name = data.get('name')
 
         deck = session.query(Deck).filter_by(user_id=user.id, id=deck_id).first()
         if not deck: raise NotFoundException('Deck {}'.format(deck_id))
 
+        name = data.get('name')
+        if session.query(Deck).filter_by(name=name).first():
+            raise InvalidDetailsException({'error':'Deck already exists'})
+        
         deck.name = name
         
-        #? On commit all objects related to that session are expired
-        #? by default thus we cannot return the deck object after committing
-        #? So, we turn it off for this case  
+
+        '''
+            On commit all objects related to that session are expired
+            by default thus we cannot return the deck object after committing
+            So, we turn it off for this case 
+        '''
         session.expire_on_commit = False
         session.commit()
         

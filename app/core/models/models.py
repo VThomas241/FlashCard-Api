@@ -32,7 +32,7 @@ class Deck(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
-    name: Mapped[str] = mapped_column(String(30),nullable=False)
+    name: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True),server_default=func.now(),nullable=False)
 
     new: Mapped[int] = mapped_column(Integer,default=0)

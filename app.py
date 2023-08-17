@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from app import api
 from app.namespaces import ns_list
 from app.core.utils.swagger import model_list
@@ -6,6 +7,7 @@ from app.core.config import Development
 
 
 app = Flask(__name__)
+CORS(app,origins=['http://localhost:5173/*'])
 app.config.from_object(Development)
 app.app_context().push()
 api.init_app(app)
