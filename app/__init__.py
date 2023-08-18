@@ -55,5 +55,8 @@ def internalServerError(e):
 
 @api.errorhandler(Exception)
 def exception(e):
-    raise InternalServerError(e.description)
-    return {"error": str(e)}
+    return {
+        "code": 500,
+        "name": 'InternalServerError',
+        "description": str(e),
+    },500

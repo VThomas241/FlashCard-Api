@@ -21,21 +21,21 @@ class LoginResource(Resource):
     @login.response(500,'Internal Server Error')
     def post(self):
         data = request.get_json()
-        errors = LoginSchema.validate(data)
+        errors = LoginSchema().validate(data)
         if errors : raise InvalidDetailsException(errors)
 
         email, password = data.get('email'), data.get('password')
 
         with Session() as session:
             user = session.query(User).filter_by(email=email).first()
-            if not user: raise NotFoundException('User {}'.format(user.id))
+            if not user: raise NotFoundException('User {}'.format(email))
 
             check = bcrypt.checkpw(
                 bytes(password, encoding='UTF-8'),
                 bytes(user.password, encoding='UTF-8')
             )
 
-            if not check: raise InvalidDetailsException({'errors': 'Invalid Password'})
+            if not check: raise InvalidDetailsException({'Password': 'Invalid'})
 
             payload = {'id': user.id}
             payload['iss'] = 'FlashCardAppVivek'

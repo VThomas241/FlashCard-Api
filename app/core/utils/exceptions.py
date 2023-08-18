@@ -24,8 +24,8 @@ class NotFoundException(CustomException):
     description: str
 
     def __init__(self, resource: str | None) -> None:
-        if description: self.description = '{} does/do not exist'.format(resource)
-        else: description = "The resource you are looking for does not exist"
+        if resource: self.description = '{} does/do not exist'.format(resource)
+        else: resource = "The resource you are looking for does not exist"
         
 class UnauthorizedException(CustomException):
     code = 401
