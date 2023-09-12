@@ -48,4 +48,4 @@ class LoginResource(Resource):
                 algorithm='HS256'
             )
 
-            return {'token': token}
+            return {'token': token},200
