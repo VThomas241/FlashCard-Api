@@ -3,7 +3,7 @@ from flask import request
 
 from app.core.models import Tag
 from app.core.utils.exceptions import InvalidDetailsException , NotFoundException
-from app.core.utils.swagger import tag_name,tag_id,tag_id_name,tag_decks
+from app.core.utils.swagger import tag
 from app.core.utils.validators import TagSchema
 from app.core.utils.protected import authorized
 
@@ -20,7 +20,7 @@ tags = Namespace(
 class TagsResource(Resource):
     @tags.doc(security='apikey')
     @tags.doc(params={'id': 'Tag ID'})
-    @tags.marshal_with(tag_decks)
+    @tags.marshal_with(tag.filter(('decks')))
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(404, 'Tag Not Found')
@@ -39,8 +39,8 @@ class TagsResource(Resource):
         return tag
     
     @tags.doc(security='apikey')
-    @tags.expect(tag_name)
-    @tags.marshal_with(tag_id_name)
+    @tags.expect(tag.filter(('name')))
+    @tags.marshal_with(tag.filter(('id','name')))
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(500, 'Internal Server Error')
@@ -61,8 +61,8 @@ class TagsResource(Resource):
         return tag
 
     @tags.doc(security='apikey')
-    @tags.expect(tag_id_name)
-    @tags.marshal_with(tag_id_name)
+    @tags.expect(tag.filter(('id','name')))
+    @tags.marshal_with(tag.filter(('id','name')))
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(404, 'Tag Not Found')
@@ -83,7 +83,7 @@ class TagsResource(Resource):
         return 'Tag {} name changed to {}'.format(data.get('id'),data.get('name'))
     
     @tags.doc(security='apikey')
-    @tags.expect(tag_id)
+    @tags.expect(tag.filter(('id')))
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(404, 'Tag Not Found')

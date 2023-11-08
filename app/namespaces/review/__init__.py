@@ -7,22 +7,22 @@ from app.core.utils.exceptions import NotFoundException, InvalidDetailsException
 from app.core.utils.swagger import deck_out, review
 from app.core.utils.protected import authorized
 
-review = Namespace(
+review_NS = Namespace(
     'review',
     'Endpoint to update deck after review',
     path='/decks',
 )
 
-@review.route('/<int:deck_id>/review')
+@review_NS.route('/<int:deck_id>/review')
 class Review(Resource):
 
-    @review.doc(security='apikey')
-    @review.expect(review)
-    @review.marshal_with(deck_out)
-    @review.response(400, 'Invalid Details')
-    @review.response(401, 'Unauthorized')
-    @review.response(404, 'Deck/Cards Not Found')
-    @review.response(500, 'Internal Server Error')
+    @review_NS.doc(security='apikey')
+    @review_NS.expect(review)
+    @review_NS.marshal_with(deck_out)
+    @review_NS.response(400, 'Invalid Details')
+    @review_NS.response(401, 'Unauthorized')
+    @review_NS.response(404, 'Deck/Cards Not Found')
+    @review_NS.response(500, 'Internal Server Error')
     @authorized
     def post(self,user,session,deck_id):
 

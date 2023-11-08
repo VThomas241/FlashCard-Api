@@ -1,6 +1,37 @@
 from flask_restx import fields,Model
 
-error_fields = Model(
+class InvalidFilterField(Exception):
+    def __init__(self, field, *args: object) -> None:
+        self.message = "The model does not contain the field '{}'".format(field)
+        super().__init__(self.message,*args)
+
+class SwaggerModel(Model):
+
+    models: list[Model] = []
+
+    def __init__(self, name, *args, **kwargs):
+        super().__init__(name, *args, **kwargs)
+        self.models.append(self)
+
+    def filter(self,fields:tuple[str] | str | None = None)->Model:
+        if not fields: return
+        if type(fields) == str: fields = (fields,)
+        fields_to_clone = {}
+        new_name:str = self.name + '-{'
+        for field in fields:
+            if field not in self.keys(): raise InvalidFilterField(field)
+            fields_to_clone[field] = self.get(field)
+            new_name += field + ','
+
+        new_name = new_name.rstrip(',') + '}'
+        new_model = SwaggerModel.clone(new_name,fields_to_clone)
+        return new_model
+
+
+def test():
+    tag.filter(['id','name'])
+
+error_fields = SwaggerModel(
     'Error',
     {
         "code": fields.Integer("Error code"),
@@ -8,20 +39,20 @@ error_fields = Model(
         "description": fields.String("Error Message"),
     })
 
-login_details = Model(
+login_details = SwaggerModel(
     'Login',
     {
         'email': fields.String(required=True, default='vivek@gmail.com', description='Your user email'),
         'password': fields.String(required=True, default='password',description='Your account password')
     })
 
-token = Model(
+token = SwaggerModel(
     'Token',
     {
     'token': fields.String(required=True, description='Your user email')
     })
 
-card_in = Model(
+card_in = SwaggerModel(
     'Card Input',
     {
         'front': fields.String(required=True, description='Card Front'),
@@ -36,14 +67,14 @@ card_out = card_in.inherit(
         'status': fields.String(required=True,description='Card Status' )
     })
 
-card_status = Model(
+card_status = SwaggerModel(
     'Card Status',
     {
         'id': fields.Integer(required=True, description='The Card ID'),
         'status': fields.String(required=True, description='The Card Status')
     }
 )
-deck_in = Model(
+deck_in = SwaggerModel(
     'Deck Input',
     {
         'name': fields.String(required=True, description='Deck Name'),
@@ -66,69 +97,43 @@ deck_out_cards = deck_out.inherit(
 )
 
 
-deck_deleted = Model(
+deck_deleted = SwaggerModel(
     'Deck Deleted',
     {
         'message': fields.String(required=True, description='Deck with id: 1 has been deleted')
     }
 )
 
-tag_ids = Model(
+tag_ids = SwaggerModel(
     'Tag Ids',
     {
         'tags': fields.List(fields.Integer,required=True,description='Tag ids')
     }
 )
 
-tag_id = Model(
-    'Tag Id only',
+tag = SwaggerModel(
+    'Tag',
     {
         'id': fields.Integer(required=True, description='Tag ID'),
-    }
-)
-tag_name = Model(
-    'Tag Name only',
-    {
-        'name': fields.String(required=True, description='Tag name')
-    }
-)
-tag_id_name = Model(
-    'Tag Id and Name',
-    {
-        'id': fields.Integer(required=True, description='Tag ID'),
-        'name': fields.String(required=True, description='Tag name')
-    })
-
-tag_decks = tag_id_name.inherit(
-    'Tag full details',
-    {
+        'name': fields.String(required=True, description='Tag name'),
         'decks': fields.Nested(deck_out,as_list=True)
-    }    
+    }
 )
+
 
 deck_out_tags = deck_out.inherit(
     'Deck Tags',
     {
-        'tags': fields.Nested(tag_id_name,as_list=True)
+        'tags': fields.Nested(tag.filter(('id','name')),as_list=True)
     }
 )
 
-review = Model(
+review = SwaggerModel(
     'Review',
     {
         'cards': fields.Nested(card_status,as_list=True)
     }
 )
-# tag_id_name = Model(
-#     'Tag Id only',
-#     {
-#         'id': fields.Integer(required=True, description='Tag ID')
-#     }
-# )
 
-model_list = (
-    error_fields, login_details, token,
-    deck_in, deck_out, deck_out_cards, deck_deleted, deck_out_tags,
-    card_in, card_out, card_status,
-    tag_id, tag_ids, tag_name, tag_id_name, tag_decks
-)
+if __name__ == '__main__':
+    test()
