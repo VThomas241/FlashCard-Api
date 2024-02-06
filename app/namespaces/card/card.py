@@ -1,10 +1,11 @@
 from flask_restx import Namespace,Resource
 from flask import request
-from app.core.utils.protected import authorized
+
 from app.core.models import Card
+from app.core.utils.protected import authorized
 from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
-from app.core.utils.swagger import card_out, card_in
 from app.core.utils.validators import CardSchema
+from app.core.utils.swagger import cardSwagger
 
 
 card = Namespace(
@@ -14,7 +15,10 @@ card = Namespace(
     ordered=True
 )
 
-@card.route('/<int:deck_id>/card/<int:card_id>')
+card_in = cardSwagger.inputModel
+card_out = cardSwagger.outputModel
+
+@card.route('/<int:deck_id>/cards/<int:card_id>')
 class CardResource(Resource):
     @card.doc(security='apikey')
     @card.marshal_with(card_out)

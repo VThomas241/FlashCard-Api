@@ -4,7 +4,7 @@ from flask import request
 from app.core.models import Deck,Card
 from app.core.utils.validators import ReviewSchema
 from app.core.utils.exceptions import NotFoundException, InvalidDetailsException
-from app.core.utils.swagger import deck_out, review
+from app.core.utils.swagger import reviewSwagger,deckSwagger
 from app.core.utils.protected import authorized
 
 review_NS = Namespace(
@@ -17,8 +17,8 @@ review_NS = Namespace(
 class Review(Resource):
 
     @review_NS.doc(security='apikey')
-    @review_NS.expect(review)
-    @review_NS.marshal_with(deck_out)
+    @review_NS.expect(reviewSwagger)
+    @review_NS.marshal_with(deckSwagger.outputModel)
     @review_NS.response(400, 'Invalid Details')
     @review_NS.response(401, 'Unauthorized')
     @review_NS.response(404, 'Deck/Cards Not Found')

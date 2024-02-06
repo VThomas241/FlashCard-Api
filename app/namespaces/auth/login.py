@@ -6,7 +6,7 @@ from app.core.models import User
 import jwt,bcrypt
 from datetime import datetime,timedelta
 from app.core.utils.validators import LoginSchema
-from app.core.utils.swagger import login_details, token
+from app.core.utils.swagger import loginSwagger, tokenSwagger
 from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
 
 login = Namespace('auth', 'Endpoints for authorization',path='/login')
@@ -14,8 +14,8 @@ login = Namespace('auth', 'Endpoints for authorization',path='/login')
 @login.route('/')
 class LoginResource(Resource):
 
-    @login.expect(login_details)
-    @login.marshal_with(token)
+    @login.expect(loginSwagger.model)
+    @login.marshal_with(tokenSwagger.model,envelope='data')
     @login.response(400,'Invalid Details')
     @login.response(404,'User Not Found')
     @login.response(500,'Internal Server Error')

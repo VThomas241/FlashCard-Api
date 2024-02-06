@@ -1,16 +1,19 @@
 from flask_restx import Namespace,Resource
-from app.core.models import Card,Deck
 
+from app.core.models import Card,Deck
+from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
 from app.core.utils.validators import CardSchema
 from app.core.utils.protected import authorized
-from app.core.utils.swagger import card_in,card_out
-from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
+from app.core.utils.swagger import cardSwagger
 
 from flask import request
 
 cards = Namespace('cards','Endpoints related to cards',path='/decks')
 
-@cards.route('/<int:deck_id>/card/')
+card_in = cardSwagger.inputModel
+card_out = cardSwagger.outputModel
+
+@cards.route('/<int:deck_id>/cards/')
 class CardsResource(Resource):
     @cards.doc(security='apikey')
     @cards.expect(card_in)

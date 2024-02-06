@@ -3,7 +3,7 @@ from flask import request
 
 from app.core.models import Deck,Tag
 from app.core.utils.exceptions import InvalidDetailsException , NotFoundException
-from app.core.utils.swagger import tag_ids,deck_out_tags
+from app.core.utils.swagger import deckSwagger,tagSwagger
 from app.core.utils.validators import TagListSchema
 from app.core.utils.protected import authorized
 
@@ -17,7 +17,7 @@ tag = Namespace(
 @tag.route('/<int:deck_id>')
 class TagResource(Resource):
     @tag.doc(security='apikey')
-    @tag.marshal_with(deck_out_tags)
+    @tag.marshal_with(deckSwagger.outputModelWithTags)
     @tag.response(400, 'Invalid Details')
     @tag.response(401, 'Unauthorized')
     @tag.response(404, 'Deck Not Found')
@@ -31,8 +31,8 @@ class TagResource(Resource):
         return deck
 
     @tag.doc(security='apikey')
-    @tag.expect(tag_ids)
-    @tag.marshal_with(deck_out_tags)
+    @tag.expect(tagSwagger.outputList)
+    @tag.marshal_with(deckSwagger.outputModelWithCards)
     @tag.response(400, 'Invalid Details')
     @tag.response(401, 'Unauthorized')
     @tag.response(404, 'Deck Not Found')
@@ -47,16 +47,16 @@ class TagResource(Resource):
         errors = TagListSchema().validate(data)
         if errors: raise InvalidDetailsException(errors)
 
-        tags_new = data.get('tags')            
-        tags_data = session.query(Tag).filter(Tag.id.in_(tags_new)).all()
-        tags_data_ids = [tag.id for tag in tags_data]
+        tags_ids_new = data.get('tags')            
+        tags_current = session.query(Tag).filter(Tag.id.in_(tags_ids_new)).all()
+        tags_ids_current = [tag.id for tag in tags_current]
 
-        if len(tags_new) != len(tags_data): 
-            diff = set(tags_new).difference(set(tags_data_ids))
+        if len(tags_ids_new) != len(tags_current): 
+            diff = set(tags_ids_new).difference(set(tags_ids_current))
             raise NotFoundException('Tags {}'.format(diff))
 
         deck.tags = []
-        deck.tags.extend(tags_data)
+        deck.tags.extend(tags_current)
         session.expire_on_commit = False
         session.commit()
 

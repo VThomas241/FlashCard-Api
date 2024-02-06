@@ -5,7 +5,7 @@ from app.core.models import Deck
 from app.core.utils.validators import DeckSchema
 from app.core.utils.protected import authorized
 from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
-from app.core.utils.swagger import deck_in, deck_out, deck_out_cards
+from app.core.utils.swagger import deckSwagger
 
 deck = Namespace(
     'decks',
@@ -17,7 +17,7 @@ deck = Namespace(
 @deck.route('/<int:deck_id>')
 class DeckResource(Resource):
     @deck.doc(security='apikey')
-    @deck.marshal_with(deck_out_cards)
+    @deck.marshal_with(deckSwagger.outputModelWithCards)
     @deck.response(401, 'Unauthorized')
     @deck.response(404, 'Deck Not Found')
     @deck.response(500,'Internal Server Error')
@@ -28,12 +28,14 @@ class DeckResource(Resource):
 
         #? To force lazy loading of cards attribute before returning
         cards = deck.cards
-
+        #? To implement in future (also in swagger.py/deckSwagger class)
+        tags = deck.tags
+        
         return deck
 
     @deck.doc(security='apikey')
-    @deck.expect(deck_in)
-    @deck.marshal_with(deck_out)
+    @deck.expect(deckSwagger.inputModel)
+    @deck.marshal_with(deckSwagger.outputModel)
     @deck.response(400, 'Invalid Deck Details')
     @deck.response(401, 'Unauthorized')
     @deck.response(404, 'Deck Not Found')

@@ -1,7 +1,11 @@
 from werkzeug.exceptions import HTTPException
 from typing import Dict
 
-
+class InvalidFilterField(Exception):
+    def __init__(self, field, *args: object) -> None:
+        self.message = "The model does not contain the field '{}'".format(field)
+        super().__init__(self.message,*args)
+        
 class CustomException(HTTPException):
     '''Custom Exception Class for api exceptions.'''
     pass

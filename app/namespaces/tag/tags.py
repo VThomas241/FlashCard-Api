@@ -3,10 +3,9 @@ from flask import request
 
 from app.core.models import Tag
 from app.core.utils.exceptions import InvalidDetailsException , NotFoundException
-from app.core.utils.swagger import tag
+from app.core.utils.swagger import tagSwagger
 from app.core.utils.validators import TagSchema
 from app.core.utils.protected import authorized
-
 
 tags = Namespace(
     'tag',
@@ -16,11 +15,11 @@ tags = Namespace(
 
 
 
-@tags.route('/')
+@tags.route('/<int:id>')
 class TagsResource(Resource):
     @tags.doc(security='apikey')
     @tags.doc(params={'id': 'Tag ID'})
-    @tags.marshal_with(tag.filter(('decks')))
+    @tags.marshal_with(tagSwagger.outputModelWithDecks)
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(404, 'Tag Not Found')
@@ -39,8 +38,8 @@ class TagsResource(Resource):
         return tag
     
     @tags.doc(security='apikey')
-    @tags.expect(tag.filter(('name')))
-    @tags.marshal_with(tag.filter(('id','name')))
+    @tags.expect(tagSwagger.inputModel)
+    @tags.marshal_with(tagSwagger.outputModel)
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(500, 'Internal Server Error')
@@ -61,8 +60,8 @@ class TagsResource(Resource):
         return tag
 
     @tags.doc(security='apikey')
-    @tags.expect(tag.filter(('id','name')))
-    @tags.marshal_with(tag.filter(('id','name')))
+    @tags.expect(tagSwagger.inputModel)
+    @tags.marshal_with(tagSwagger.outputModel)
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(404, 'Tag Not Found')
@@ -70,6 +69,7 @@ class TagsResource(Resource):
     @authorized
     def put(self,user,session):
         data = request.get_json()
+        data['id'] = request.args.get('id')
         errors = TagSchema().validate(data=data)
 
         if errors: raise InvalidDetailsException(errors)
@@ -83,14 +83,13 @@ class TagsResource(Resource):
         return 'Tag {} name changed to {}'.format(data.get('id'),data.get('name'))
     
     @tags.doc(security='apikey')
-    @tags.expect(tag.filter(('id')))
     @tags.response(400, 'Invalid Details')
     @tags.response(401, 'Unauthorized')
     @tags.response(404, 'Tag Not Found')
     @tags.response(500, 'Internal Server Error')
     @authorized
     def delete(self,user,session):
-        data = request.get_json()
+        data = request.args
         errors = TagSchema(only=('id')).validate(data=data)
 
         if errors: raise InvalidDetailsException(errors)

@@ -8,20 +8,8 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # ------ Declarative base class ------ #
 class Base(DeclarativeBase):
-
-    # ------ Redundant if used with marshalling ------ #
-    def dict(self):
-        d = copy.deepcopy( self.__dict__)
-        for key in list(d):
-            if isinstance(d[key], (sqlalchemy.orm.state.InstanceState,sqlalchemy.orm.collections.InstrumentedList)):
-                del d[key]
-            elif isinstance(d[key],datetime.datetime):
-                d[key] = str(d[key])
-            elif isinstance(d[key], bytes):
-                d[key] = str(d[key])[2:-1]
-
-        return d
+    pass
 
 
-engine = create_engine('sqlite:///test.db')
+engine = create_engine('sqlite:///database/database.db')
 Session = sessionmaker(engine)

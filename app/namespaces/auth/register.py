@@ -2,27 +2,19 @@ from flask import request, current_app as app
 from flask_restx import Namespace, Resource, fields
 
 from app.core.utils.validators import RegisterSchema
-from app.core.utils.exceptions import  InvalidDetailsException
+from app.core.utils.exceptions import  InvalidDetailsException,UserAlreadyExists
 from app.core.database import Session
 from app.core.models import User
-
+from app.core.utils.swagger import registerSwagger
 import bcrypt
 
 
 register = Namespace('auth', 'Endpoints for authorization',path='/register')
 
-register_details = register.model(
-    'Registration',
-    {
-        'user_name': fields.String(required=True, description="Your user name"),
-        'email': fields.String(required=True, description="Your email"),
-        'password': fields.String(required=True, description="Your password"),
-    })
-
 @register.route('/')
 class RegisterResource(Resource):
 
-    @register.expect(register_details)
+    @register.expect(registerSwagger.model)
     @register.response(500, 'Internal Server Error')
     @register.response(403, 'Account already exists')
     @register.response(400, 'Invalid User Details')
@@ -46,7 +38,7 @@ class RegisterResource(Resource):
         
         with Session() as session:
             if session.query(User).filter_by(email=email).first(): 
-                raise InvalidDetailsException({'error':'User already exists'})
+                raise UserAlreadyExists({'error':'User already exists'})
 
             session.add(User(
                 user_name=user_name,
@@ -55,4 +47,4 @@ class RegisterResource(Resource):
             
             session.commit()
         
-        return "Registration for {} was successfull".format(email), 201
+        return {'data':{'message': "Registration for {} was successfull".format(email)}}, 201

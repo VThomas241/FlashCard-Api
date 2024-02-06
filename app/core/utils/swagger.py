@@ -1,9 +1,7 @@
-from flask_restx import fields,Model
+from flask_restx import fields, Model
+from app.core.utils.exceptions import InvalidFilterField
 
-class InvalidFilterField(Exception):
-    def __init__(self, field, *args: object) -> None:
-        self.message = "The model does not contain the field '{}'".format(field)
-        super().__init__(self.message,*args)
+# from abc import ABC
 
 class SwaggerModel(Model):
 
@@ -13,25 +11,124 @@ class SwaggerModel(Model):
         super().__init__(name, *args, **kwargs)
         self.models.append(self)
 
-    def filter(self,fields:tuple[str] | str | None = None)->Model:
-        if not fields: return
-        if type(fields) == str: fields = (fields,)
-        fields_to_clone = {}
-        new_name:str = self.name + '-{'
-        for field in fields:
-            if field not in self.keys(): raise InvalidFilterField(field)
-            fields_to_clone[field] = self.get(field)
-            new_name += field + ','
+    # def filter(self, name:str, fields: tuple[str]|str|None = None) -> Model:
+    #     '''
+    #     Filters the required fields from the Swagger Model
+    #     :param str name: The name of the new model.
+    #     :param tuple fields: The fields from the model you want to keep.
+        
+    #     '''
 
-        new_name = new_name.rstrip(',') + '}'
-        new_model = SwaggerModel.clone(new_name,fields_to_clone)
-        return new_model
+    #     for model in self.models:
+    #         if model.name == name: return model
+
+    #     if not fields: return
+    #     if type(fields) == str: fields = (fields,)
+
+    #     fields_to_clone = {}
+    #     for field in fields:
+    #         if field not in self.keys(): raise InvalidFilterField(field)
+    #         fields_to_clone[field] = self.get(field)
+
+    #     new_model = SwaggerModel.clone(name,fields_to_clone)
+    #     return new_model
+
+class cardSwagger:
+    inputModel = SwaggerModel(
+        'Card Input',
+        {
+            'front': fields.String(required=True, description='Card Front'),
+            'back': fields.String(required=True, description='Card Back')
+        })
+
+    outputModel = SwaggerModel(
+        'Card Output',
+        {
+            'id': fields.Integer(required=True, description='The card ID'),
+            'deck_id': fields.Integer(required=True, description='The deck ID'),
+            'front': fields.String(required=True, description='Card Front'),
+            'back': fields.String(required=True, description='Card Back'),
+            'status': fields.String(required=True,description='Card Status')
+        })
+    
+
+class deckSwagger:
+    __tag_model = SwaggerModel(
+        'temp tag model',
+        {
+            'id': fields.Integer(required=True, description='Tag ID'),
+            'name': fields.String(required=True, description='Tag name'),
+        }
+    )
+
+    inputModel = SwaggerModel(
+        'Deck Input',
+        {
+            'name': fields.String(required=True, description='Deck Name'),
+        })
+
+    outputModel = SwaggerModel(
+        'Deck Output',
+        {
+            'id': fields.Integer(required=True, description='Deck ID'),
+            'name': fields.String(required=True, description='Deck Name'),
+            'new': fields.String(required=True, description='Cards that are new'),
+            'learning': fields.String(required=True, description='Cards that are being learnt'),
+            'review': fields.String(required=True, description='Cards to be reviewed'),
+            'tags': fields.Nested(__tag_model,as_list=True)
+        })
+    
+   
+    outputModelWithTags = SwaggerModel(
+        'Deck Output With Tags',
+        {
+            'id': fields.Integer(required=True, description='Deck ID'),
+            'name': fields.String(required=True, description='Deck Name'),
+            'tags': fields.Nested(__tag_model,as_list=True)
+        }
+    )
+
+    outputModelWithCards = outputModel.inherit(
+        'Deck Output With Cards',
+        {
+            'cards': fields.Nested(cardSwagger.outputModel,as_list=True)
+        }
+    )
+
+class tagSwagger:
+    inputModel = SwaggerModel(
+    'Tag Input',
+    {
+        'name': fields.String(required=True, description='Tag name')
+    }
+    )
+    outputModel = SwaggerModel(
+    'Tag Output',
+    {
+        'id': fields.Integer(required=True, description='Tag ID'),
+        'name': fields.String(required=True, description='Tag name'),
+    }
+    )
+
+    outputModelWithDecks = outputModel.inherit(
+    'Tag Output With Decks',
+    {
+        'decks': fields.Nested(deckSwagger.outputModelWithTags,as_list=True)
+    }
+    )
+    
+    outputList = SwaggerModel(
+    'Tag Ids',
+    {
+        'tags': fields.List(fields.Integer,required=True,description='Tag ids')
+    }
+    )
 
 
-def test():
-    tag.filter(['id','name'])
 
-error_fields = SwaggerModel(
+
+class errorSwagger:
+    model = SwaggerModel(
     'Error',
     {
         "code": fields.Integer("Error code"),
@@ -39,101 +136,36 @@ error_fields = SwaggerModel(
         "description": fields.String("Error Message"),
     })
 
-login_details = SwaggerModel(
+class loginSwagger:
+    model = SwaggerModel(
     'Login',
     {
         'email': fields.String(required=True, default='vivek@gmail.com', description='Your user email'),
         'password': fields.String(required=True, default='password',description='Your account password')
     })
 
-token = SwaggerModel(
+class registerSwagger:
+    model = SwaggerModel(
+    'Registration',
+    {
+        'user_name': fields.String(required=True, description="Your user name"),
+        'email': fields.String(required=True, description="Your email"),
+        'password': fields.String(required=True, description="Your password"),
+    })
+
+class tokenSwagger:
+    model = SwaggerModel(
     'Token',
     {
     'token': fields.String(required=True, description='Your user email')
     })
 
-card_in = SwaggerModel(
-    'Card Input',
-    {
-        'front': fields.String(required=True, description='Card Front'),
-        'back': fields.String(required=True, description='Card Back')
-    })
-
-card_out = card_in.inherit(
-    'Card Output',
-    {
-        'id': fields.Integer(required=True, description='The card ID'),
-        'deck_id': fields.Integer(required=True, description='The deck ID'),
-        'status': fields.String(required=True,description='Card Status' )
-    })
-
-card_status = SwaggerModel(
-    'Card Status',
-    {
-        'id': fields.Integer(required=True, description='The Card ID'),
-        'status': fields.String(required=True, description='The Card Status')
-    }
-)
-deck_in = SwaggerModel(
-    'Deck Input',
-    {
-        'name': fields.String(required=True, description='Deck Name'),
-    })
-
-deck_out = deck_in.inherit(
-    'Deck Output',
-    {
-        'id': fields.Integer(required=True, description='Deck ID'),
-        'new': fields.String(required=True, description='Cards that are new'),
-        'learning': fields.String(required=True, description='Cards that are being learnt'),
-        'review': fields.String(required=True, description='Cards to be reviewed')
-    })
-
-deck_out_cards = deck_out.inherit(
-    'Deck Cards',
-    {
-        'cards': fields.Nested(card_out,as_list=True)
-    }
-)
 
 
-deck_deleted = SwaggerModel(
-    'Deck Deleted',
-    {
-        'message': fields.String(required=True, description='Deck with id: 1 has been deleted')
-    }
-)
-
-tag_ids = SwaggerModel(
-    'Tag Ids',
-    {
-        'tags': fields.List(fields.Integer,required=True,description='Tag ids')
-    }
-)
-
-tag = SwaggerModel(
-    'Tag',
-    {
-        'id': fields.Integer(required=True, description='Tag ID'),
-        'name': fields.String(required=True, description='Tag name'),
-        'decks': fields.Nested(deck_out,as_list=True)
-    }
-)
-
-
-deck_out_tags = deck_out.inherit(
-    'Deck Tags',
-    {
-        'tags': fields.Nested(tag.filter(('id','name')),as_list=True)
-    }
-)
-
-review = SwaggerModel(
+class reviewSwagger:
+    model = SwaggerModel(
     'Review',
     {
-        'cards': fields.Nested(card_status,as_list=True)
+        'cards': fields.Nested(cardSwagger.outputModel,as_list=True)
     }
 )
-
-if __name__ == '__main__':
-    test()
