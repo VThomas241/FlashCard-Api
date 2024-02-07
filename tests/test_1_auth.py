@@ -1,7 +1,7 @@
 from app.core.models import User
 
-def test_create_user_invalid_details(client,user_details):
-    # Blank input
+def test_create_user_invalid_details(client,session,user_details):
+    # <-------- Blank input -------->
     response = client.post('/register/',json=dict(
         user_name='',
         email= user_details['email'],
@@ -9,24 +9,25 @@ def test_create_user_invalid_details(client,user_details):
     ))
     assert response.status_code == 400
     
-    # Missing input
+    # <-------- Missing input -------->
     response = client.post('/register/',json=dict(
         email= user_details['email'],
         password= user_details['password']
     ))
     assert response.status_code == 400
 
+    assert session.query(User).first() == None
 
-def test_create_user(client,Session,user_details):
-    with Session() as session:
-        assert session.query(User).first() == None
-        response = client.post('/register/',json=dict(
-            user_name='vivek24',
-            email= user_details['email'],
-            password= user_details['password']
-        ))
-        assert response.status_code == 201
-        assert session.query(User).first() != None
+
+def test_create_user(client,session,user_details):
+    assert session.query(User).first() == None
+    response = client.post('/register/',json=dict(
+        user_name='vivek24',
+        email= user_details['email'],
+        password= user_details['password']
+    ))
+    assert response.status_code == 201
+    assert session.query(User).first() != None
 
 def test_create_user_duplicate(client,user_details):
     response = client.post('/register/',json=dict(
@@ -63,3 +64,6 @@ def test_login_valid_details(client,user_details):
     print(response.json)
     assert response.status_code == 200
     assert response.json['data']['token']
+    user_details['token'] = response.json['data']['token']
+    user_details['headers'] = {'Authorization': 'Bearer ' + user_details['token']}
+    assert user_details['token']

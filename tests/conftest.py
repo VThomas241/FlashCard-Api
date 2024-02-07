@@ -3,11 +3,11 @@ from run import app as create_app
 from app.core.models import Base
 from app.core.database import engine
 
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # engine = create_engine('sqlite:///tests/test.db') 
-#! This doesn't work because in the api calls the database 
+#! Same engine path as the main application must be used.
+#! A different engine path will fail because in the api calls the database 
 #! engine connection is to app.core.database.database.db
 #! So a different connection cannot be used in testing.
 
@@ -25,9 +25,9 @@ def app():
     yield app
     # clean up / reset resources here
 
-@pytest.fixture
-def Session():
-    return sessionmaker(engine)
+@pytest.fixture(scope='session')
+def session():
+    return sessionmaker(engine)()
 
 @pytest.fixture
 def client(app):
@@ -37,7 +37,7 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def user_details():
     return dict(
         email='vivekthomasnitro1@gmail.com',

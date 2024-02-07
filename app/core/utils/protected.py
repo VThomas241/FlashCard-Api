@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import request,current_app as app
+from sqlalchemy import select
 from app.core.database import Session
 from app.core.models import User
 from app.core.utils.exceptions import UnauthorizedException
@@ -43,7 +44,7 @@ def authorized(func: Callable):
         user_id = token_body.get('id')
 
         with Session() as session:
-            user:User = session.query(User).get(user_id)
+            user:User = session.get(User,user_id)
             if not user: raise UnauthorizedException()
             
             #? Returning the view function with an additional user_id variable for easy processing

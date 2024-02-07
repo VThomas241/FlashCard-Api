@@ -72,9 +72,9 @@ class deckSwagger:
         {
             'id': fields.Integer(required=True, description='Deck ID'),
             'name': fields.String(required=True, description='Deck Name'),
-            'new': fields.String(required=True, description='Cards that are new'),
-            'learning': fields.String(required=True, description='Cards that are being learnt'),
-            'review': fields.String(required=True, description='Cards to be reviewed'),
+            'new': fields.Integer(required=True, description='Cards that are new'),
+            'learning': fields.Integer(required=True, description='Cards that are being learnt'),
+            'review': fields.Integer(required=True, description='Cards to be reviewed'),
             'tags': fields.Nested(__tag_model,as_list=True)
         })
     

@@ -1,9 +1,12 @@
 from flask import Flask
 from flask_cors import CORS
 from app import api
-from app.namespaces import ns_list
-from app.core.utils.swagger import SwaggerModel
+
+#* Must be imported before the rest of the imports to load the dotenv file first (required for pytest)
 from app.core.config import Development
+ 
+from app.core.utils.swagger import SwaggerModel
+from app.namespaces import ns_list
 
 
 # def create_app():

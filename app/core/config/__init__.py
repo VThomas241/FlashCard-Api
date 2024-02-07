@@ -10,10 +10,11 @@ class Config(object):
     ERROR_INCLUDE_MESSAGE=False
     RESTX_MASK_SWAGGER=False
 
-
 class Development(Config):
-    DEBUG = True,
-    DATABASE_URI = ''
+    DEBUG = True
+    # DATABASE_URI = 'tests/test.db'
+
 
 class Production(Config):
     DEBUG=False
+    # DATABASE_URI = 'database/database.db'
