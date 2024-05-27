@@ -17,13 +17,13 @@ card_out = cardSwagger.outputModel
 class CardsResource(Resource):
     @cards.doc(security='apikey')
     @cards.expect(card_in)
-    @cards.marshal_with(card_out)
+    @cards.marshal_with(card_out,code=201,envelope='data')
     @cards.response(400,'Invalid Card Details')
     @cards.response(404,'Deck Not Found')
     @cards.response(500,'Internal Server Error')
     @authorized
     def post(self,user,session,deck_id):
-        deck = session.query(Deck).filter_by(user_id=user.id,deck_id=deck_id).first()
+        deck = session.query(Deck).filter_by(user_id=user.id,id=deck_id).first()
 
         if not deck: raise NotFoundException('Deck {}'.format(deck_id))
 
@@ -35,9 +35,12 @@ class CardsResource(Resource):
         back = data.get('back')
         front = data.get('front')
 
+        if session.query(Card).filter_by(front='front',back='back').first():
+            raise InvalidDetailsException({'error':'Card already exists in the deck.'})
+
         card = Card(user_id=user.id, deck_id=deck_id, front=front, back=back)
-        deck.append(card)
+        deck.cards.append(card)
         session.expire_on_commit = False
         session.commit()
         
-        return card
+        return card,201

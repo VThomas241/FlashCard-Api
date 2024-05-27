@@ -1,0 +1,23 @@
+{
+    "data": {
+        "decks": [
+            {
+                "id": 1,
+                "name": "changed_name",
+                "tags": [
+                    {
+                        "id": 1,
+                        "name": "Tag_1_Changed"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Tag_2"
+                    }
+                ]
+            }
+        ],
+        "id": 1,
+        "name": "Tag_1_Changed",
+        "color": "#2550ca"
+    }
+}

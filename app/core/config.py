@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 
-
 load_dotenv()
 
 class Config(object):
@@ -9,12 +8,13 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY', 'secret-key')
     ERROR_INCLUDE_MESSAGE=False
     RESTX_MASK_SWAGGER=False
+    FRONTEND_URL = 'http://localhost:5173'
 
-class Development(Config):
-    DEBUG = True
-    # DATABASE_URI = 'tests/test.db'
+# class Development(Config):
+#     DEBUG = True
+#     DATABASE_URI = 'tests/test.db'
 
 
-class Production(Config):
-    DEBUG=False
-    # DATABASE_URI = 'database/database.db'
+# class Production(Config):
+#     DEBUG = False
+#     DATABASE_URI = 'database/database.db'

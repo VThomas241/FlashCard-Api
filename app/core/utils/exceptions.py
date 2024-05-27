@@ -32,7 +32,7 @@ class NotFoundException(CustomException):
     description: str
 
     def __init__(self, resource: str | None) -> None:
-        if resource: self.description = '{} does/do not exist'.format(resource)
+        if resource: self.description = '{} not found'.format(resource)
         else: resource = "The resource you are looking for does not exist"
         
 class UnauthorizedException(CustomException):

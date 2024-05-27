@@ -99,7 +99,8 @@ class tagSwagger:
     inputModel = SwaggerModel(
     'Tag Input',
     {
-        'name': fields.String(required=True, description='Tag name')
+        'name': fields.String(required=True, description='Tag name'),
+        'color': fields.String(description='Tag color')
     }
     )
     outputModel = SwaggerModel(
@@ -107,6 +108,7 @@ class tagSwagger:
     {
         'id': fields.Integer(required=True, description='Tag ID'),
         'name': fields.String(required=True, description='Tag name'),
+        'color': fields.String(required=True, description='Tag color')
     }
     )
 

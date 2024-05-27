@@ -1,15 +1,16 @@
 import pytest
-from run import app as create_app
+from app import create_app
 from app.core.models import Base
-from app.core.database import engine
-
+from app.core.config import Config # Also loads dotenv file
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from werkzeug.exceptions import InternalServerError
+import os
 
-# engine = create_engine('sqlite:///tests/test.db') 
-#! Same engine path as the main application must be used.
-#! A different engine path will fail because in the api calls the database 
-#! engine connection is to app.core.database.database.db
-#! So a different connection cannot be used in testing.
+db_uri = os.environ.get('DATABASE_URI',None)
+if not db_uri: raise InternalServerError('Database URI variable not defined in environment.')
+
+engine = create_engine(db_uri)
 
 #* Resetting the database at the start of every pytest. 
 Base.metadata.drop_all(bind=engine)
@@ -17,7 +18,8 @@ Base.metadata.create_all(bind=engine)
 
 @pytest.fixture
 def app():
-    app = create_app
+    app = create_app()
+    app.config.from_object(Config)
     app.config.update({
         'TESTING': True,
     })
@@ -27,7 +29,7 @@ def app():
 
 @pytest.fixture(scope='session')
 def session():
-    return sessionmaker(engine)()
+    return sessionmaker(bind=engine)()
 
 @pytest.fixture
 def client(app):

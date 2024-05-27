@@ -1,10 +1,10 @@
-from app.core.database import Base
-
 from sqlalchemy import String, Text, DateTime, Table, Column, ForeignKey, Integer, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 import datetime
 from typing import Any, List
 
+class Base(DeclarativeBase):
+    pass
 
 class User(Base):
     __tablename__ = 'user'
@@ -59,7 +59,7 @@ class Tag(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     name: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
-    color: Mapped[str] = mapped_column(String(7), nullable=False, server_default='#2550ca')
+    color: Mapped[str] = mapped_column(String(7), nullable=False, default='#2550ca')
 
     def __init__(self, name:str):
         self.name = name

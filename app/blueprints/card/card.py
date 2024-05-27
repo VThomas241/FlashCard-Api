@@ -21,19 +21,19 @@ card_out = cardSwagger.outputModel
 @card.route('/<int:deck_id>/cards/<int:card_id>')
 class CardResource(Resource):
     @card.doc(security='apikey')
-    @card.marshal_with(card_out)
+    @card.marshal_with(card_out,envelope='data')
     @card.response(404, 'Card Not Found')
     @card.response(500, 'Internal Setver Error')
     @authorized
     def get(self,user,session,deck_id,card_id):
-        card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,card_id=card_id).first()
+        card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,id=card_id).first()
         if not card: raise NotFoundException('Card {}'.format(card_id))
 
         return card
     
     @card.doc(security='apikey')
     @card.expect(card_in)
-    @card.marshal_with(card_out)
+    @card.marshal_with(card_out,envelope='data')
     @card.response(400, 'Invalid Card Details')
     @card.response(404, 'Card Not Found')
     @card.response(500, 'Internal Server Error')
@@ -45,7 +45,7 @@ class CardResource(Resource):
 
         back = data.get('back')
         front = data.get('front')
-        card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,card_id=card_id).first()
+        card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,id=card_id).first()
 
         if not card: raise NotFoundException('Card {}'.format(card_id))
 
@@ -71,7 +71,10 @@ class CardResource(Resource):
         session.delete(card)
         session.commit()
         session.close()
-        return {'message': 'Deck with id: {} has been deleted'.format(deck_id)},204
+        return {
+            'data':{
+                'message': 'Deck with id: {} has been deleted'.format(deck_id)}
+            },204
 
 
 

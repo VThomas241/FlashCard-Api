@@ -46,4 +46,4 @@ class DecksResource(Resource):
         session.commit()
 # Session commit before returning may cause tags to be removed from memory
 # and may need to be loaded back into memory
-        return deck
+        return deck,201

@@ -17,7 +17,7 @@ deck = Namespace(
 @deck.route('/<int:deck_id>')
 class DeckResource(Resource):
     @deck.doc(security='apikey')
-    @deck.marshal_with(deckSwagger.outputModelWithCards)
+    @deck.marshal_with(deckSwagger.outputModelWithCards,envelope='data')
     @deck.response(401, 'Unauthorized')
     @deck.response(404, 'Deck Not Found')
     @deck.response(500,'Internal Server Error')
@@ -35,7 +35,7 @@ class DeckResource(Resource):
 
     @deck.doc(security='apikey')
     @deck.expect(deckSwagger.inputModel)
-    @deck.marshal_with(deckSwagger.outputModel)
+    @deck.marshal_with(deckSwagger.outputModel,envelope='data')
     @deck.response(400, 'Invalid Deck Details')
     @deck.response(401, 'Unauthorized')
     @deck.response(404, 'Deck Not Found')
@@ -64,7 +64,7 @@ class DeckResource(Resource):
         '''
         session.expire_on_commit = False
         session.commit()
-        
+        tags = deck.tags
         return deck
     
     @deck.doc(security='apikey')
@@ -80,5 +80,5 @@ class DeckResource(Resource):
         session.commit()
         session.close()
 
-        return {'message': 'Deck with id: {} has been deleted'.format(deck_id)},204
+        return {'data':{'message': 'Deck with id: {} has been deleted'.format(deck_id)}},204
 
