@@ -1,11 +1,11 @@
 from flask_restx import Namespace,Resource
 from flask import request
 
-from app.core.models import Deck,Card,Review as ReviewModel
-from app.core.utils.validators import ReviewSchema
-from app.core.utils.exceptions import NotFoundException, InvalidDetailsException
-from app.core.utils.swagger import reviewSwagger,deckSwagger
-from app.core.utils.protected import authorized
+from app.core.models import Deck,Card,Review
+from app.utils.validators import ReviewSchema
+from app.utils.exceptions import NotFoundException, InvalidDetailsException
+from app.utils.swagger import reviewSwagger,deckSwagger
+from app.utils.protected import authorized
 
 review = Namespace(
     'review',
@@ -14,7 +14,7 @@ review = Namespace(
 )
 
 @review.route('/<int:deck_id>/review')
-class Review(Resource):
+class ReviewCreation(Resource):
 
     @review.doc(security='apikey')
     @review.expect(reviewSwagger)
@@ -50,7 +50,7 @@ class Review(Resource):
 
         for idx in range(len(card_ids)): db_cards[idx].status = cards[idx]['status']
             
-        review = ReviewModel(user_id=user.id,deck_id=deck.id,deck_name=deck.name)
+        review = Review(user_id=user.id,deck_id=deck.id,deck_name=deck.name)
         session.add(review)
         
         session.expire_on_commit = False

@@ -1,13 +1,13 @@
-from flask import request,make_response as mk
+from flask import request
 from flask_restx import Namespace, Resource
 from sqlalchemy import select
 from sqlalchemy.orm import Session 
 
 from app.core.models import Deck
-from app.core.utils.validators import DeckSchema
-from app.core.utils.exceptions import InvalidDetailsException
-from app.core.utils.protected import authorized
-from app.core.utils.swagger import deckSwagger
+from app.utils.validators import DeckSchema
+from app.utils.exceptions import InvalidDetailsException
+from app.utils.protected import authorized
+from app.utils.swagger import deckSwagger
 
 decks = Namespace('decks', 'Endpoints for decks',path='/decks')
 

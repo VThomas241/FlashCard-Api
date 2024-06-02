@@ -2,10 +2,10 @@ from flask import Flask
 from flask_restx import Api
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException,InternalServerError
-from app.core.utils.exceptions import CustomException, InvalidDetailsException
+from app.utils.exceptions import CustomException, InvalidDetailsException
 from app.core.config import Config
-from app.core.utils.swagger import SwaggerModel
-from app.blueprints import ns_list
+from app.utils.swagger import SwaggerModel
+from app.api import ns_list
 
 authorizations = {
     'apikey': {

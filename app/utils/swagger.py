@@ -1,5 +1,5 @@
 from flask_restx import fields, Model
-from app.core.utils.exceptions import InvalidFilterField
+
 
 # from abc import ABC
 

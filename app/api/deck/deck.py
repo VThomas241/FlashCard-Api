@@ -2,10 +2,10 @@ from flask import request
 from flask_restx import Namespace, Resource
 
 from app.core.models import Deck
-from app.core.utils.validators import DeckSchema
-from app.core.utils.protected import authorized
-from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
-from app.core.utils.swagger import deckSwagger
+from app.utils.validators import DeckSchema
+from app.utils.protected import authorized
+from app.utils.exceptions import InvalidDetailsException,NotFoundException
+from app.utils.swagger import deckSwagger
 
 deck = Namespace(
     'decks',

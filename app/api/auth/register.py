@@ -1,11 +1,11 @@
-from flask import request, current_app as app
-from flask_restx import Namespace, Resource, fields
+from flask import request
+from flask_restx import Namespace, Resource
 
-from app.core.utils.validators import RegisterSchema
-from app.core.utils.exceptions import  InvalidDetailsException,UserAlreadyExists
+from app.utils.validators import RegisterSchema
+from app.utils.exceptions import  InvalidDetailsException,UserAlreadyExists
 from app.core.database import Session
 from app.core.models import User
-from app.core.utils.swagger import registerSwagger
+from app.utils.swagger import registerSwagger
 import bcrypt
 
 

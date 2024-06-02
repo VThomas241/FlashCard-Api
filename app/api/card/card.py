@@ -2,10 +2,10 @@ from flask_restx import Namespace,Resource
 from flask import request
 
 from app.core.models import Card
-from app.core.utils.protected import authorized
-from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
-from app.core.utils.validators import CardSchema
-from app.core.utils.swagger import cardSwagger
+from app.utils.protected import authorized
+from app.utils.exceptions import InvalidDetailsException,NotFoundException
+from app.utils.validators import CardSchema
+from app.utils.swagger import cardSwagger
 
 
 card = Namespace(
@@ -23,7 +23,7 @@ class CardResource(Resource):
     @card.doc(security='apikey')
     @card.marshal_with(card_out,envelope='data')
     @card.response(404, 'Card Not Found')
-    @card.response(500, 'Internal Setver Error')
+    @card.response(500, 'Internal Server Error')
     @authorized
     def get(self,user,session,deck_id,card_id):
         card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,id=card_id).first()

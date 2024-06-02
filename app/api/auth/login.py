@@ -1,13 +1,13 @@
 from flask import request, current_app as app
-from flask_restx import Namespace, Resource, fields, abort
+from flask_restx import Namespace, Resource
 from app.core.database import Session
 from app.core.models import User
 
 import jwt,bcrypt
 from datetime import datetime,timedelta
-from app.core.utils.validators import LoginSchema
-from app.core.utils.swagger import loginSwagger, tokenSwagger
-from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
+from app.utils.validators import LoginSchema
+from app.utils.swagger import loginSwagger, tokenSwagger
+from app.utils.exceptions import InvalidDetailsException,NotFoundException
 
 login = Namespace('auth', 'Endpoints for authorization',path='/login')
 

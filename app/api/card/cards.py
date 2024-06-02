@@ -1,10 +1,10 @@
 from flask_restx import Namespace,Resource
 
 from app.core.models import Card,Deck
-from app.core.utils.exceptions import InvalidDetailsException,NotFoundException
-from app.core.utils.validators import CardSchema
-from app.core.utils.protected import authorized
-from app.core.utils.swagger import cardSwagger
+from app.utils.exceptions import InvalidDetailsException,NotFoundException
+from app.utils.validators import CardSchema
+from app.utils.protected import authorized
+from app.utils.swagger import cardSwagger
 
 from flask import request
 

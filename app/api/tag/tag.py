@@ -2,10 +2,10 @@ from flask_restx import Namespace,Resource
 from flask import request
 
 from app.core.models import Deck,Tag
-from app.core.utils.exceptions import InvalidDetailsException , NotFoundException
-from app.core.utils.swagger import deckSwagger,tagSwagger
-from app.core.utils.validators import TagListSchema
-from app.core.utils.protected import authorized
+from app.utils.exceptions import InvalidDetailsException , NotFoundException
+from app.utils.swagger import deckSwagger,tagSwagger
+from app.utils.validators import TagListSchema
+from app.utils.protected import authorized
 
 
 tag = Namespace(

@@ -1,5 +1,5 @@
 from werkzeug.exceptions import HTTPException
-from typing import Dict
+from typing import Dict,List
 
 class InvalidFilterField(Exception):
     def __init__(self, field, *args: object) -> None:
@@ -20,7 +20,7 @@ class InvalidDetailsException(CustomException):
     name = 'InvalidDetailsException'
     errors: dict
     
-    def __init__(self, errors: Dict[str,str]) -> None:
+    def __init__(self, errors: Dict[str,List[str]]) -> None:
         self.errors = errors
 
 class NotFoundException(CustomException):

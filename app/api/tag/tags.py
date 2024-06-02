@@ -2,10 +2,10 @@ from flask_restx import Namespace,Resource
 from flask import request
 from sqlalchemy.orm import Session
 from app.core.models import Tag,User
-from app.core.utils.exceptions import InvalidDetailsException , NotFoundException
-from app.core.utils.swagger import tagSwagger
-from app.core.utils.validators import TagSchema
-from app.core.utils.protected import authorized
+from app.utils.exceptions import InvalidDetailsException , NotFoundException
+from app.utils.swagger import tagSwagger
+from app.utils.validators import TagSchema
+from app.utils.protected import authorized
 
 tags = Namespace(
     'tag',

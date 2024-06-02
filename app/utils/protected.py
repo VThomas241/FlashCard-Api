@@ -2,8 +2,7 @@ from functools import wraps
 from flask import request,current_app as app
 from app.core.database import Session
 from app.core.models import User
-from app.core.utils.exceptions import UnauthorizedException
-from werkzeug.exceptions import InternalServerError
+from app.utils.exceptions import UnauthorizedException
 from typing import Callable
 import jwt
 
