@@ -27,7 +27,7 @@
 ## Reviews
 - /decks/\<int:deck_id\>/review
     - /
-        - post - update deck statistics with latest review
+        - ~~post - update deck statistics with latest review~~
 ## Tags
 - /tags/
     - /

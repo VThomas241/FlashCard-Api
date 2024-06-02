@@ -64,7 +64,7 @@ class CardResource(Resource):
     @authorized
     def delete(self,user,session,deck_id,card_id):
 
-        card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,card_id=card_id).first()
+        card = session.query(Card).filter_by(user_id=user.id,deck_id=deck_id,id=card_id).first()
         
         if not card: raise NotFoundException('Card {}'.format(card_id))
 

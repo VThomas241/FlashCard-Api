@@ -1,23 +1,15 @@
-{
-    "data": {
-        "decks": [
-            {
-                "id": 1,
-                "name": "changed_name",
-                "tags": [
-                    {
-                        "id": 1,
-                        "name": "Tag_1_Changed"
-                    },
-                    {
-                        "id": 2,
-                        "name": "Tag_2"
-                    }
-                ]
-            }
-        ],
-        "id": 1,
-        "name": "Tag_1_Changed",
-        "color": "#2550ca"
-    }
+{"cards": [
+        {"id": 2, "deck_id": 2, "front": "reviewf_1", "back": "reviewb_1", "status": "learning"
+        },
+        {"id": 3, "deck_id": 2, "front": "reviewf_2", "back": "reviewb_2", "status": "learning"
+        },
+        {"id": 4, "deck_id": 2, "front": "reviewf_3", "back": "reviewb_3", "status": "review"
+        },
+        {"id": 5, "deck_id": 2, "front": "reviewf_4", "back": "reviewb_4", "status": "learning"
+        },
+        {"id": 6, "deck_id": 2, "front": "reviewf_5", "back": "reviewb_5", "status": "new"
+        },
+        {"id": 7, "deck_id": 2, "front": "reviewf_6", "back": "reviewb_6", "status": "new"
+        }
+    ], "id": 2, "name": "review_test", "new": -4, "learning": 3, "review": 1, "tags": []
 }

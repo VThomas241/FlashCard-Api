@@ -30,7 +30,7 @@ class DeckSchema(Schema):
     name = fields.String(required=True,validate=isEmptyString) 
 
 class ReviewSchema(Schema):
-    cards = fields.Nested(CardSchema,only=('id','status'),many=True,required=True)
+    cards = fields.List(fields.Nested(CardSchema(only=('id','status')),required=True))
 
 class TagSchema(Schema):
     id = fields.Integer(required=True,strict=True)

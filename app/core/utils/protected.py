@@ -6,7 +6,6 @@ from app.core.utils.exceptions import UnauthorizedException
 from werkzeug.exceptions import InternalServerError
 from typing import Callable
 import jwt
-import os
 
 def authorized(func: Callable):
 
